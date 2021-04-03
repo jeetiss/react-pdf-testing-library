@@ -1,0 +1,24 @@
+{
+  "private": true,
+  "type": "module",
+  "main": "./src/index.js",
+  "scripts": {
+    "test": "jest"
+  },
+  "dependencies": {
+    "canvas": "^2.7.0",
+    "pdf-dist": "^1.0.0"
+  },
+  "devDependencies": {
+    "jest": "^26.6.3",
+    "jest-esm-jsx-transform": "^1.0.0",
+    "jest-image-snapshot": "^4.4.1"
+  },
+  "jest": {
+    "verbose": true,
+    "transform": {
+      "\\.js$": "jest-esm-jsx-transform"
+    },
+    "setupFilesAfterEnv": ["./jest.setup.js"]
+  }
+}
