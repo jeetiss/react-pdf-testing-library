@@ -1,8 +1,54 @@
+import { Buffer } from "buffer";
 import Canvas from "canvas";
-import { resolve } from "path";
-import { readFile } from "fs/promises";
+import { pdf, render as renderFile } from "@react-pdf/renderer";
 import * as pdfjs from "pdf-dist/es5/build/pdf";
-import { cwd } from "process";
+
+const render = async (component, options = {}) => {
+  if (options.file) {
+    await renderFile(component, options.file);
+  }
+
+  const buff = await renderToBuffer(component);
+  const loadingTask = pdfjs.getDocument({
+    data: buff.buffer,
+    verbosity: 0,
+  });
+
+  const pdfDocument = await loadingTask.promise;
+  const page = await pdfDocument.getPage(1);
+  const viewport = page.getViewport({ scale: 1.0 });
+  const canvasFactory = new NodeCanvasFactory();
+  const canvasAndContext = canvasFactory.create(
+    viewport.width,
+    viewport.height
+  );
+  const renderContext = {
+    canvasContext: canvasAndContext.context,
+    viewport,
+    canvasFactory,
+  };
+
+  const renderTask = page.render(renderContext);
+  await renderTask.promise;
+
+  return canvasAndContext.canvas.toBuffer();
+};
+
+const renderToBuffer = async function (element) {
+  const instance = pdf(element);
+  const stream = await instance.toBuffer();
+
+  return new Promise((resolve) => {
+    var bufs = [];
+    stream.on("data", function (d) {
+      bufs.push(d);
+    });
+    stream.on("end", function () {
+      resolve(Buffer.concat(bufs));
+      instance.container.finish();
+    });
+  });
+};
 
 class NodeCanvasFactory {
   create(width, height) {
@@ -26,33 +72,5 @@ class NodeCanvasFactory {
     canvasAndContext.context = null;
   }
 }
-
-const render = async (path) => {
-  const data = new Uint8Array(await readFile(resolve(cwd(), "test", path)));
-
-  const loadingTask = pdfjs.getDocument({
-    data,
-    verbosity: 0,
-  });
-
-  const pdfDocument = await loadingTask.promise;
-  const page = await pdfDocument.getPage(1);
-  const viewport = page.getViewport({ scale: 1.0 });
-  const canvasFactory = new NodeCanvasFactory();
-  const canvasAndContext = canvasFactory.create(
-    viewport.width,
-    viewport.height
-  );
-  const renderContext = {
-    canvasContext: canvasAndContext.context,
-    viewport,
-    canvasFactory,
-  };
-
-  const renderTask = page.render(renderContext);
-  await renderTask.promise;
-
-  return canvasAndContext.canvas.toBuffer();
-};
 
 export default render;
