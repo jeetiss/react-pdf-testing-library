@@ -17,6 +17,7 @@ const styles = StyleSheet.create({
     textAlign: "center",
     backgroundColor: "#e4e4e4",
     textTransform: "uppercase",
+    fontFamily: "Oswald",
   },
   body: {
     flexGrow: 1,

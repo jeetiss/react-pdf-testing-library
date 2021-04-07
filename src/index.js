@@ -1,7 +1,7 @@
 import { Buffer } from "buffer";
 import Canvas from "canvas";
 import { pdf, render as renderFile } from "@react-pdf/renderer";
-import * as pdfjs from "pdf-dist/es5/build/pdf";
+import * as pdfjs from "pdfjs-dist/es5/build/pdf";
 
 const render = async (component, options = {}) => {
   if (options.file) {
@@ -11,7 +11,7 @@ const render = async (component, options = {}) => {
   const buff = await renderToBuffer(component);
   const loadingTask = pdfjs.getDocument({
     data: buff.buffer,
-    verbosity: 0,
+    verbosity: 5,
   });
 
   const pdfDocument = await loadingTask.promise;
@@ -45,7 +45,7 @@ const renderToBuffer = async function (element) {
     });
     stream.on("end", function () {
       resolve(Buffer.concat(bufs));
-      instance.container.finish();
+      instance.container.finish && instance.container.finish();
     });
   });
 };

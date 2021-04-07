@@ -1,5 +1,10 @@
 import React from "react";
-import { Document, Page, View, Text, StyleSheet } from "@react-pdf/renderer";
+import { Document, Page, View, Text, StyleSheet, Font } from "@react-pdf/renderer";
+
+Font.register({
+  family: "Oswald",
+  src: "https://fonts.gstatic.com/s/oswald/v13/Y_TKV6o8WovbUd3m_X9aAA.ttf",
+});
 
 const styles = StyleSheet.create({
   select: {
@@ -17,7 +22,7 @@ const styles = StyleSheet.create({
     width: "50%",
     height: "100%",
     backgroundColor: "lightgray",
-    margin: "auto",
+    marginLeft: "25%",
   },
   knob: {
     alignItems: "center",
@@ -31,15 +36,17 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
     fontSize: 8,
     top: -6,
+    fontFamily: "Oswald",
   },
   text: {
     fontSize: 10,
+    fontFamily: "Oswald",
   },
 });
 
 const Knob = ({ value }) => (
   <View style={[styles.knob, { left: `${value - 3}%` }]}>
-    <Text style={{ fontSize: 8, marginTop: 4 }}>{value}</Text>
+    <Text>{value}</Text>
   </View>
 );
 
