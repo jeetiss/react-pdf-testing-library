@@ -1,6 +1,7 @@
+import React from "react";
 import { Buffer } from "buffer";
 import Canvas from "canvas";
-import { pdf, render as renderFile } from "@react-pdf/renderer";
+import { pdf, render as renderFile, Document, Page } from "@react-pdf/renderer";
 import * as pdfjs from "pdfjs-dist/es5/build/pdf";
 
 const render = async (component, options = {}) => {
@@ -8,30 +9,95 @@ const render = async (component, options = {}) => {
     await renderFile(component, options.file);
   }
 
-  const buff = await renderToBuffer(component);
-  const loadingTask = pdfjs.getDocument({
-    data: buff.buffer,
-    verbosity: 5,
-  });
+  return renderToBuffer(component);
+};
 
-  const pdfDocument = await loadingTask.promise;
-  const page = await pdfDocument.getPage(1);
-  const viewport = page.getViewport({ scale: 1.0 });
-  const canvasFactory = new NodeCanvasFactory();
-  const canvasAndContext = canvasFactory.create(
-    viewport.width,
-    viewport.height
-  );
-  const renderContext = {
-    canvasContext: canvasAndContext.context,
-    viewport,
-    canvasFactory,
+const Wrapper = ({ children }) => {
+  let wop_wop_JIVEM_JIVEM = children;
+  if (typeof children.type === "function") {
+    wop_wop_JIVEM_JIVEM = children.type();
+  }
+
+  if (wop_wop_JIVEM_JIVEM.type !== Document) {
+    return (
+      <Document>
+        <Page size="A4">{children}</Page>
+      </Document>
+    );
+  }
+
+  return children;
+};
+
+const shallow = async (element) => {
+  const source = await render(<Wrapper>{element}</Wrapper>);
+  const document = await pdfjs.getDocument({
+    data: source.buffer,
+    verbosity: 5,
+  }).promise;
+
+  const pages = Array.from(
+    { length: document.numPages },
+    (_, i) => i
+  ).map((index) => document.getPage(index + 1));
+
+  const getPage = (index) => {
+    if (index == null && document.numPages !== 1)
+      throw Error(
+        "Document contains more than 1 page, please provide a index of page for rendering"
+      );
+
+    return pages[index ?? 0];
   };
 
-  const renderTask = page.render(renderContext);
-  await renderTask.promise;
+  return {
+    get pagesNumber() {
+      return document.numPages;
+    },
 
-  return canvasAndContext.canvas.toBuffer();
+    async getPageImage(index) {
+      const page = await getPage(index);
+      const viewport = page.getViewport({ scale: 1.0 });
+      const canvasFactory = new NodeCanvasFactory();
+      const canvasAndContext = canvasFactory.create(
+        viewport.width,
+        viewport.height
+      );
+      const renderContext = {
+        canvasContext: canvasAndContext.context,
+        viewport,
+        canvasFactory,
+      };
+
+      const renderTask = page.render(renderContext);
+      await renderTask.promise;
+
+      return canvasAndContext.canvas.toBuffer();
+    },
+
+    async containsLinkTo(href, pageIndex) {
+      const page = await getPage(pageIndex);
+      const annotations = await page.getAnnotations();
+
+      return annotations.some(
+        (annotation) => annotation.subtype === "Link" && annotation.url === href
+      );
+    },
+
+    async containsAnchorTo(dest, pageIndex) {
+      const page = await getPage(pageIndex);
+      const annotations = await page.getAnnotations();
+
+      if (dest.startsWith("#")) {
+        dest = dest.substring(1);
+      }
+
+      return annotations.some(
+        (annotation) =>
+          annotation.subtype === "Link" && annotation.dest === dest
+      );
+    },
+  };
 };
 
 const renderToBuffer = async function (element) {
@@ -73,4 +139,4 @@ class NodeCanvasFactory {
   }
 }
 
-export default render;
+export { render, shallow };

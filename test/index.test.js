@@ -1,31 +1,13 @@
 import React from "react";
-import render from "../src";
+import { shallow } from "../src";
 
-import slider from "./stub/knobs";
-import text from "./stub/text";
-import goto from "./stub/go-to";
 import Resume from "./stub/resume";
 
 it("renders correctly", async () => {
-  const image = await render(slider);
+  const wrapper = await shallow(<Resume />);
 
-  expect(image).toMatchImageSnapshot();
-});
-
-it("works with text", async () => {
-  const image = await render(text);
-
-  expect(image).toMatchImageSnapshot();
-});
-
-it("works render links", async () => {
-  const image = await render(goto);
-
-  expect(image).toMatchImageSnapshot();
-});
-
-it("works with resume", async () => {
-  const image = await render(<Resume />);
-
-  expect(image).toMatchImageSnapshot();
+  expect(wrapper.pagesNumber).toBe(3);
+  expect(await wrapper.getPageImage(0)).toMatchImageSnapshot();
+  expect(await wrapper.getPageImage(1)).toMatchImageSnapshot();
+  expect(await wrapper.getPageImage(2)).toMatchImageSnapshot();
 });
