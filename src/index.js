@@ -3,6 +3,7 @@ import { Buffer } from "buffer";
 import Canvas from "canvas";
 import { pdf, render as renderFile, Document, Page } from "@react-pdf/renderer";
 import * as pdfjs from "pdfjs-dist/es5/build/pdf";
+import { crop } from "./crop";
 
 const render = async (component, options = {}) => {
   if (options.file) {
@@ -55,16 +56,21 @@ const shallow = async (element) => {
       return document.numPages;
     },
 
-    async getPageImage(index) {
+    async getPageImage(index, options) {
+      if (typeof options === "undefined") {
+        options = typeof index === "object" ? index : { index };
+        index = options.index;
+      }
+
       const page = await getPage(index);
       const viewport = page.getViewport({ scale: 1.0 });
       const canvasFactory = new NodeCanvasFactory();
-      const canvasAndContext = canvasFactory.create(
+      const { canvas, context } = canvasFactory.create(
         viewport.width,
         viewport.height
       );
       const renderContext = {
-        canvasContext: canvasAndContext.context,
+        canvasContext: context,
         viewport,
         canvasFactory,
       };
@@ -72,7 +78,40 @@ const shallow = async (element) => {
       const renderTask = page.render(renderContext);
       await renderTask.promise;
 
-      return canvasAndContext.canvas.toBuffer();
+      if (options.crop) {
+        const docCoods = {
+          top: 0,
+          left: 0,
+          bottom: canvas.height,
+          right: canvas.width,
+        };
+        const imageData = context.getImageData(
+          0,
+          0,
+          canvas.width,
+          canvas.height
+        );
+        const contentCoords = await crop(imageData);
+        const cropDimensions = normalize(options.crop);
+
+        cropDimensions.forEach((dimension) => {
+          docCoods[dimension] = contentCoords[dimension];
+        });
+
+        const sx = docCoods.top;
+        const sy = docCoods.left;
+        const sWidth = docCoods.right - docCoods.left + 1;
+        const sHeight = docCoods.bottom - docCoods.top + 1;
+
+        const cropedCanvas = Canvas.createCanvas(sWidth, sHeight);
+        const ctx = cropedCanvas.getContext("2d");
+
+        ctx.drawImage(canvas, sx, sy, sWidth, sHeight, 0, 0, sWidth, sHeight);
+
+        return cropedCanvas.toBuffer();
+      }
+
+      return canvas.toBuffer();
     },
 
     async containsLinkTo(href, pageIndex) {
@@ -98,6 +137,14 @@ const shallow = async (element) => {
       );
     },
   };
+};
+
+const normalize = (options) => {
+  if (!Array.isArray(options)) {
+    return options === "all" ? ["bottom", "left", "right", "top"] : [options];
+  }
+
+  return options;
 };
 
 const renderToBuffer = async function (element) {

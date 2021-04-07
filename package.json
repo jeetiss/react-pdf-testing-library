@@ -3,14 +3,17 @@
   "type": "module",
   "main": "./src/index.js",
   "scripts": {
+    "build": "asc ./src/crop/assembly/index.ts --target release --config ./src/crop/assembly/asconfig.json",
     "test": "jest"
   },
   "dependencies": {
+    "@assemblyscript/loader": "^0.18.22",
     "@react-pdf/renderer": "^1.6.15",
     "canvas": "^2.7.0",
     "pdfjs-dist": "2.6.347"
   },
   "devDependencies": {
+    "assemblyscript": "^0.18.22",
     "jest": "^26.6.3",
     "jest-esm-jsx-transform": "^1.0.0",
     "jest-image-snapshot": "^4.4.1",
@@ -21,6 +24,8 @@
     "transform": {
       "\\.js$": "jest-esm-jsx-transform"
     },
+    "testEnvironment": "node",
+    "transformIgnorePatterns": ["/node_modules/(?!@assemblyscript/)"],
     "setupFilesAfterEnv": [
       "./jest.setup.js"
     ]

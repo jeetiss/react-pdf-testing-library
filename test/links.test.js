@@ -15,7 +15,9 @@ it("should render links as anchors", async () => {
   );
 
   expect(await wrapper.containsAnchorTo("#myDest")).toBe(true);
-  expect(await wrapper.getPageImage()).toMatchImageSnapshot();
+  expect(
+    await wrapper.getPageImage({ crop: ["bottom", "right"] })
+  ).toMatchImageSnapshot();
 });
 
 it("should render links as links", async () => {
@@ -31,5 +33,7 @@ it("should render links as links", async () => {
   expect(
     await wrapper.containsLinkTo("https://es.wikipedia.org/wiki/Lorem_ipsum")
   ).toBe(true);
-  expect(await wrapper.getPageImage()).toMatchImageSnapshot();
+  expect(
+    await wrapper.getPageImage({ crop: ["bottom", "right"] })
+  ).toMatchImageSnapshot();
 });

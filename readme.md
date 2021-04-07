@@ -6,7 +6,7 @@
 - [x]  component / document rendering
 - [x]  multipage pdf (aka "integration" tests)
 - [x]  test links
-- [ ]  crop content ?? (aka unit tests)
+- [x]  crop content ?? (aka unit tests)
 - [ ]  upload failed images to cdn ??
 - [ ]  gha integration
 

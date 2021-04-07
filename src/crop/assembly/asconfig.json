@@ -1,0 +1,18 @@
+{
+  "targets": {
+    "debug": {
+      "binaryFile": "code.wasm",
+      "exportRuntime": true,
+      "debug": true
+    },
+    "release": {
+      "binaryFile": "code.wasm",
+      "exportRuntime": true,
+      "optimizeLevel": 3,
+      "shrinkLevel": 1,
+      "converge": false,
+      "noAssert": false
+    }
+  },
+  "options": {}
+}
