@@ -18,7 +18,6 @@ class ImageReporter {
       testResult.failureMessage.match(/different from snapshot/)
     ) {
       const files = await readdir('./diffs/')
-
       const promises = files.map(async (value) => {
         try {
           const file = await readFile(`diffs/${value}`)
@@ -27,12 +26,19 @@ class ImageReporter {
             fileName: value,
             contentType: 'image/png'
           })
-          console.log(chalk.red(`Uploaded image diff file to ${chalk.bold(ufile.cdnUrl)}`))
-          console.log()
+          console.log(
+            chalk.red.bold(
+              `Uploaded image diff file to ${chalk.red(ufile.cdnUrl)}`
+            )
+          )
+
+          return ufile.cdnUrl
         } catch (error) {
           console.log(error)
         }
       })
+
+      console.log()
 
       return promises
     }
