@@ -14,24 +14,27 @@ const render = async (component, options = {}) => {
 };
 
 const Wrapper = ({ children }) => {
-  let wop_wop_JIVEM_JIVEM = children;
+  let topLevelElement = children;
   if (typeof children.type === "function") {
-    wop_wop_JIVEM_JIVEM = children.type(children.props);
+    topLevelElement = children.type(children.props);
   }
 
-  if (wop_wop_JIVEM_JIVEM.type !== Document) {
+  if (topLevelElement.type !== Document) {
     return (
       <Document>
-        <Page size="A4">{children}</Page>
+        <Page size="A4">{topLevelElement}</Page>
       </Document>
     );
   }
 
-  return wop_wop_JIVEM_JIVEM;
+  return topLevelElement;
 };
 
 const shallow = async (element) => {
-  const source = await render(<Wrapper>{element}</Wrapper>);
+  const source = React.isValidElement(element)
+    ? await render(<Wrapper>{element}</Wrapper>)
+    : element;
+
   const document = await pdfjs.getDocument({
     data: source.buffer,
     verbosity: 5,
