@@ -1,15 +1,10 @@
 import React from "react";
 import { shallow } from "../src";
-import { Link, Font } from "@react-pdf/renderer";
-
-Font.register({
-  family: "Oswald",
-  src: "https://fonts.gstatic.com/s/oswald/v13/Y_TKV6o8WovbUd3m_X9aAA.ttf",
-});
+import { Link } from "@react-pdf/renderer";
 
 it("should render links as anchors", async () => {
   const wrapper = await shallow(
-    <Link href="#myDest" style={{ fontFamily: "Oswald" }}>
+    <Link href="#myDest" style={{ fontFamily: "Open Sans" }}>
       Link
     </Link>
   );
@@ -23,7 +18,7 @@ it("should render links as anchors", async () => {
 it("should render links as links", async () => {
   const wrapper = await shallow(
     <Link
-      style={{ fontFamily: "Oswald" }}
+      style={{ fontFamily: "Open Sans" }}
       src="https://es.wikipedia.org/wiki/Lorem_ipsum"
     >
       Lorem Ipsum

@@ -16,7 +16,7 @@ const render = async (component, options = {}) => {
 const Wrapper = ({ children }) => {
   let wop_wop_JIVEM_JIVEM = children;
   if (typeof children.type === "function") {
-    wop_wop_JIVEM_JIVEM = children.type();
+    wop_wop_JIVEM_JIVEM = children.type(children.props);
   }
 
   if (wop_wop_JIVEM_JIVEM.type !== Document) {
@@ -27,7 +27,7 @@ const Wrapper = ({ children }) => {
     );
   }
 
-  return children;
+  return wop_wop_JIVEM_JIVEM;
 };
 
 const shallow = async (element) => {
@@ -141,7 +141,9 @@ const shallow = async (element) => {
 
 const normalize = (options) => {
   if (!Array.isArray(options)) {
-    return options === "all" ? ["bottom", "left", "right", "top"] : [options];
+    return typeof options === "boolean"
+      ? ["bottom", "left", "right", "top"]
+      : [options];
   }
 
   return options;
