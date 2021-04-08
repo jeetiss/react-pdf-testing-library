@@ -37,7 +37,7 @@ const shallow = async (element) => {
 
   const document = await pdfjs.getDocument({
     data: source.buffer,
-    verbosity: 5,
+    verbosity: 0,
   }).promise;
 
   const pages = Array.from(
