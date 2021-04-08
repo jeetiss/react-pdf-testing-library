@@ -1,10 +1,8 @@
 const { readdir, readFile } = require('fs/promises')
 const { uploadFile } = require('@uploadcare/upload-client')
 
-const isCI = process.env.IS_CI === true
+const isCI = process.env.IS_CI === 'true'
 const PUBLIC_KEY = process.env.UCKEY
-
-console.log(process.env.IS_CI, typeof process.env.IS_CI)
 
 class ImageReporter {
   constructor (globalConfig, options) {
