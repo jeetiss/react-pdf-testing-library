@@ -1,7 +1,7 @@
 import React from "react";
 import { Buffer } from "buffer";
 import Canvas from "canvas";
-import { pdf, Document, Page } from "@react-pdf/renderer";
+import { renderToStream, Document, Page } from "@react-pdf/renderer";
 import * as pdfjs from "pdfjs-dist/es5/build/pdf";
 import { crop } from "./crop";
 
@@ -156,9 +156,7 @@ const normalize = (options) => {
 };
 
 const renderToBuffer = async function (element) {
-  const instance = pdf(element);
-  const stream = await instance.toBuffer();
-
+  const stream = await renderToStream(element);
   return new Promise((resolve) => {
     var bufs = [];
     stream.on("data", function (d) {
@@ -166,7 +164,6 @@ const renderToBuffer = async function (element) {
     });
     stream.on("end", function () {
       resolve(Buffer.concat(bufs));
-      instance.container.finish && instance.container.finish();
     });
   });
 };

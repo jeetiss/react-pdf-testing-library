@@ -2,7 +2,7 @@
 
 - [x]  generate pdf
 - [x]  render pdf to png
-- [x]  ~~links ?? fix annotation layer~~ pfjs doesn't render default fonts in nodejs (Helvetica)
+- [x]  ~~links ?? fix annotation layer~~ pfjs doesn't render default fonts in nodejs (Helvetica, ect)
 - [x]  component / document rendering
 - [x]  multipage pdf (aka "integration" tests)
 - [x]  test links
@@ -11,4 +11,4 @@
 - [ ]  gha integration
 
 
-- [ ]  store managment for master screens ??
+- [ ]  store managment for snapshots ??
