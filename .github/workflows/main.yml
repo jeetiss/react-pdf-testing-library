@@ -31,4 +31,7 @@ jobs:
       - name: Run linter
         run: npm run lint
       - name: Run Jest
+        env:
+          IS_CI: true
+          UCKEY: ${{ secrets.UCKEY }}
         run: npm test

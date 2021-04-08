@@ -7,7 +7,7 @@
 - [x]  multipage pdf (aka "integration" tests)
 - [x]  test links
 - [x]  crop content ?? (aka unit tests)
-- [ ]  upload failed images to cdn ??
+- [x]  upload failed images to cdn ??
 - [ ]  gha integration
 
 
