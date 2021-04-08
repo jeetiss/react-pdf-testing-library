@@ -1,3 +1,4 @@
+const chalk = require('chalk')
 const { readdir, readFile } = require('fs/promises')
 const { uploadFile } = require('@uploadcare/upload-client')
 
@@ -16,7 +17,6 @@ class ImageReporter {
       testResult.numFailingTests &&
       testResult.failureMessage.match(/different from snapshot/)
     ) {
-      console.log('run')
       const files = await readdir('./diffs/')
 
       const promises = files.map(async (value) => {
@@ -27,8 +27,7 @@ class ImageReporter {
             fileName: value,
             contentType: 'image/png'
           })
-
-          console.log(`Uploaded image diff file to ${ufile.cdnUrl}`)
+          console.log(chalk.red(`Uploaded image diff file to ${chalk.bold(ufile.cdnUrl)}`))
           console.log()
         } catch (error) {
           console.log(error)
