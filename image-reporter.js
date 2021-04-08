@@ -16,9 +16,10 @@ class ImageReporter {
       testResult.numFailingTests &&
       testResult.failureMessage.match(/different from snapshot/)
     ) {
+      console.log('run')
       const files = await readdir('./diffs/')
 
-      files.forEach(async (value) => {
+      const promises = files.map(async (value) => {
         try {
           const file = await readFile(`diffs/${value}`)
           const ufile = await uploadFile(file, {
@@ -33,6 +34,8 @@ class ImageReporter {
           console.log(error)
         }
       })
+
+      return promises
     }
   }
 }
