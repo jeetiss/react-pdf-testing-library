@@ -17,5 +17,5 @@ it("should render Open Sans", async () => {
     </>
   );
 
-  expect(await wrapper.getPageImage({ crop: true })).toMatchImageSnapshot();
+  expect(await wrapper.imageSnapshot({ crop: true })).toMatchImageSnapshot();
 });

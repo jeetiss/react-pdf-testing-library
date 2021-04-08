@@ -1,19 +1,11 @@
 import React from "react";
 import { Buffer } from "buffer";
 import Canvas from "canvas";
-import { pdf, render as renderFile, Document, Page } from "@react-pdf/renderer";
+import { pdf, Document, Page } from "@react-pdf/renderer";
 import * as pdfjs from "pdfjs-dist/es5/build/pdf";
 import { crop } from "./crop";
 
-const render = async (component, options = {}) => {
-  if (options.file) {
-    await renderFile(component, options.file);
-  }
-
-  return renderToBuffer(component);
-};
-
-const Wrapper = ({ children }) => {
+const DocumentChecker = ({ children }) => {
   let topLevelElement = children;
   if (typeof children.type === "function") {
     topLevelElement = children.type(children.props);
@@ -32,7 +24,7 @@ const Wrapper = ({ children }) => {
 
 const shallow = async (element) => {
   const source = React.isValidElement(element)
-    ? await render(<Wrapper>{element}</Wrapper>)
+    ? await renderToBuffer(<DocumentChecker>{element}</DocumentChecker>)
     : element;
 
   const document = await pdfjs.getDocument({
@@ -45,6 +37,7 @@ const shallow = async (element) => {
     (_, i) => i
   ).map((index) => document.getPage(index + 1));
 
+  let currentPage = null
   const getPage = (index) => {
     if (index == null && document.numPages !== 1)
       throw Error(
@@ -59,11 +52,15 @@ const shallow = async (element) => {
       return document.numPages;
     },
 
-    async getPageImage(index, options) {
-      if (typeof options === "undefined") {
-        options = typeof index === "object" ? index : { index };
-        index = options.index;
-      }
+    page (index) {
+      currentPage = index
+
+      return this
+    },
+
+    async imageSnapshot(options = {}) {
+      const index = currentPage
+      currentPage = null
 
       const page = await getPage(index);
       const viewport = page.getViewport({ scale: 1.0 });
@@ -106,18 +103,21 @@ const shallow = async (element) => {
         const sWidth = docCoods.right - docCoods.left + 1;
         const sHeight = docCoods.bottom - docCoods.top + 1;
 
-        const cropedCanvas = Canvas.createCanvas(sWidth, sHeight);
-        const ctx = cropedCanvas.getContext("2d");
+        const croppedCanvas = Canvas.createCanvas(sWidth, sHeight);
+        const ctx = croppedCanvas.getContext("2d");
 
         ctx.drawImage(canvas, sx, sy, sWidth, sHeight, 0, 0, sWidth, sHeight);
 
-        return cropedCanvas.toBuffer();
+        return croppedCanvas.toBuffer();
       }
 
       return canvas.toBuffer();
     },
 
-    async containsLinkTo(href, pageIndex) {
+    async containsLinkTo(href) {
+      const pageIndex = currentPage
+      currentPage = null
+  
       const page = await getPage(pageIndex);
       const annotations = await page.getAnnotations();
 
@@ -126,7 +126,10 @@ const shallow = async (element) => {
       );
     },
 
-    async containsAnchorTo(dest, pageIndex) {
+    async containsAnchorTo(dest) {
+      const pageIndex = currentPage
+      currentPage = null
+  
       const page = await getPage(pageIndex);
       const annotations = await page.getAnnotations();
 
@@ -191,4 +194,4 @@ class NodeCanvasFactory {
   }
 }
 
-export { render, shallow };
+export { shallow };
