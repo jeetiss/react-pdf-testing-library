@@ -11,16 +11,11 @@ const toMatchImageSnapshot = configureToMatchImageSnapshot({
 
 expect.extend({ toMatchImageSnapshot })
 
-// register fonts
-beforeEach(() => {
+// register  fonts
+beforeAll(() => {
   Font.register({
     family: 'Open Sans',
     src:
       'https://fonts.gstatic.com/s/opensans/v17/mem8YaGs126MiZpBA-UFVZ0e.ttf'
   })
-})
-
-// reset all registered fonts
-afterEach(() => {
-  Font.clear()
 })

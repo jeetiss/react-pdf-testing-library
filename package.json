@@ -39,6 +39,9 @@
     "setupFilesAfterEnv": [
       "./jest.setup.js"
     ],
-    "reporters": [ "default", "<rootDir>/image-reporter.js" ]
+    "reporters": [
+      "default",
+      "<rootDir>/image-reporter.js"
+    ]
   }
 }
