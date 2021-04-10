@@ -32,7 +32,8 @@ jobs:
           IS_CI: true
           UCKEY: ${{ secrets.UCKEY }}
         run: npm test
-      - name: Add Comment
+      - name: Add comment with diffs
+        if: ${{ failure() }}
         uses: actions/github-script@v2
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
