@@ -11,7 +11,7 @@ const Font = ({ text, font }) => (
 it('should render Open Sans', async () => {
   const wrapper = await shallow(
     <>
-      <Font text='jaa' font='Open Sans' />
+      <Font text='java' font='Open Sans' />
       <Font text='script' font='Open Sans' />
       <Font text='rulez' font='Open Sans' />
     </>

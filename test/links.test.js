@@ -21,7 +21,7 @@ it('should render links as links', async () => {
       style={{ fontFamily: 'Open Sans' }}
       src='https://es.wikipedia.org/wiki/Lorem_ipsum'
     >
-      Lorem Ipsm
+      Lorem Ipsum
     </Link>
   )
 

@@ -8,7 +8,7 @@ it('should render pdf from components correctly', async () => {
   const wrapper = await shallow(<Resume />)
 
   expect(wrapper.pagesNumber).toBe(3)
-  expect(await wrapper.page(1).imageSnapshot()).toMatchImageSnapshot()
+  expect(await wrapper.page(0).imageSnapshot()).toMatchImageSnapshot()
   expect(await wrapper.page(1).imageSnapshot()).toMatchImageSnapshot()
   expect(await wrapper.page(2).imageSnapshot()).toMatchImageSnapshot()
 })
