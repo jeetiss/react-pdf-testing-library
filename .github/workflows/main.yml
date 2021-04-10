@@ -38,7 +38,9 @@ jobs:
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
-            const { readFile } = require('fs/promises')
+            const fs = require('fs')
+            const { promisify } = require('util')
+            const readFile = promisify(fs.readFile)
             const template = ({ file, url }) => `
             <details>
               <summary>
