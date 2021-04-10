@@ -1,5 +1,5 @@
 const chalk = require('chalk')
-const { readdir, readFile } = require('fs/promises')
+const { readdir, readFile, writeFile } = require('fs/promises')
 const { uploadFile } = require('@uploadcare/upload-client')
 
 const isCI = process.env.IS_CI === 'true'
@@ -11,14 +11,17 @@ class ImageReporter {
     this._options = options
   }
 
-  async onTestResult (test, testResult, aggregateResults) {
+  async onRunComplete (_, results) {
+    if (!isCI) return
     if (
-      isCI &&
-      testResult.numFailingTests &&
-      testResult.failureMessage.match(/different from snapshot/)
+      results.testResults.some(
+        (testResult) =>
+          testResult.numFailingTests &&
+          testResult.failureMessage.match(/different from snapshot/)
+      )
     ) {
       const files = await readdir('./diffs/')
-      const promises = files.map(async (value) => {
+      const snapshots = await Promise.all(files.map(async (value) => {
         try {
           const file = await readFile(`diffs/${value}`)
           const ufile = await uploadFile(file, {
@@ -32,15 +35,13 @@ class ImageReporter {
             )
           )
 
-          return ufile.cdnUrl
+          return { url: ufile.cdnUrl, file: value }
         } catch (error) {
           console.log(error)
         }
-      })
+      }))
 
-      console.log()
-
-      return promises
+      await writeFile('./snapshotresults.json', JSON.stringify({ snapshots }, null, 2))
     }
   }
 }

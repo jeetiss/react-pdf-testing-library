@@ -1,6 +1,6 @@
 name: CI
 
-on: [push]
+on: [pull_request]
 
 jobs:
   basic:
@@ -32,3 +32,39 @@ jobs:
           IS_CI: true
           UCKEY: ${{ secrets.UCKEY }}
         run: npm test
+      - name: Add comment with diffs
+        if: ${{ failure() }}
+        uses: actions/github-script@v2
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const fs = require('fs')
+            const { promisify } = require('util')
+            const readFile = promisify(fs.readFile)
+            const template = ({ file, url }) => `
+            <details>
+              <summary>
+                <strong>${file}</strong>
+              </summary>
+
+              ![${file}](${url})
+
+            </details>
+            `
+
+            try {
+              const data = await readFile('./snapshotresults.json')
+              const { snapshots } = JSON.parse(data)
+              const info = snapshots.map(snap => template(snap)).join('\n')
+
+              if (info) {
+                await github.issues.createComment({
+                  issue_number: context.issue.number,
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  body: '**Diffs:**\n\n' + info
+                })
+              }
+            } catch (error) {
+              console.log(error)
+            }
