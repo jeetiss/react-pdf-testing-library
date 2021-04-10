@@ -3,6 +3,7 @@
   "main": "./src/index.js",
   "scripts": {
     "build": "asc ./src/crop/assembly/index.ts --target release --config ./src/crop/assembly/asconfig.json",
+    "track-obsolete": "JEST_IMAGE_SNAPSHOT_TRACK_OBSOLETE=1 jest",
     "test": "jest",
     "lint": "eslint ."
   },
@@ -41,7 +42,8 @@
     ],
     "reporters": [
       "default",
-      "<rootDir>/image-reporter.js"
+      "<rootDir>/image-reporter.js",
+      "jest-image-snapshot/src/outdated-snapshot-reporter.js"
     ]
   }
 }

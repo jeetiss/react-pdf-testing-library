@@ -4,7 +4,7 @@ import { shallow } from '../src'
 
 import Resume from './stub/resume'
 
-it('renders correctly', async () => {
+it('should render pdf from components correctly', async () => {
   const wrapper = await shallow(<Resume />)
 
   expect(wrapper.pagesNumber).toBe(3)
