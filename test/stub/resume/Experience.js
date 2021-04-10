@@ -124,7 +124,7 @@ const experienceData = [
     date: 'A long time ago...',
     details: [
       'Replaced damaged power converters',
-      'Performed menial labor thoughout the farm in order to ensure its continued operation'
+      'Performed menial labor thoughout the farm in order to ensure its continued operation.'
     ],
     position: 'Moisture Farmer'
   }
