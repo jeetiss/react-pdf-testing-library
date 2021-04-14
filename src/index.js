@@ -32,10 +32,9 @@ const shallow = async (element) => {
     verbosity: 0
   }).promise
 
-  const pages = Array.from(
-    { length: document.numPages },
-    (_, i) => i
-  ).map((index) => document.getPage(index + 1))
+  const pages = range(document.numPages).map((pageIndex) =>
+    document.getPage(pageIndex + 1)
+  )
 
   let currentPage = null
   const getPage = (index) => {
@@ -145,6 +144,8 @@ const shallow = async (element) => {
     }
   }
 }
+
+const range = (length) => Array.from({ length }, (_, index) => index)
 
 const cropOptionsToDimentions = (options) => {
   if (!Array.isArray(options)) {
