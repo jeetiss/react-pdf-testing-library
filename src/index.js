@@ -93,7 +93,7 @@ const shallow = async (element) => {
           canvas.height
         )
         const contentCoords = await crop(imageData)
-        const cropDimensions = normalize(options.crop)
+        const cropDimensions = cropOptionsToDimentions(options.crop)
 
         cropDimensions.forEach((dimension) => {
           docCoods[dimension] = contentCoords[dimension]
@@ -146,7 +146,7 @@ const shallow = async (element) => {
   }
 }
 
-const normalize = (options) => {
+const cropOptionsToDimentions = (options) => {
   if (!Array.isArray(options)) {
     return typeof options === 'boolean'
       ? ['bottom', 'left', 'right', 'top']
