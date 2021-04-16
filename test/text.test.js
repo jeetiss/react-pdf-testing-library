@@ -1,6 +1,6 @@
 import React from 'react'
 import { View, Text } from '@react-pdf/renderer'
-import { shallow } from '../src'
+import { renderComponent } from '../src'
 
 const Font = ({ text, font }) => (
   <View>
@@ -9,7 +9,7 @@ const Font = ({ text, font }) => (
 )
 
 it('should render Open Sans', async () => {
-  const wrapper = await shallow(
+  const wrapper = await renderComponent(
     <>
       <Font text='java' font='Open Sans' />
       <Font text='script' font='Open Sans' />

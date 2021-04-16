@@ -1,9 +1,9 @@
 import React from 'react'
-import { shallow } from '../src'
+import { renderComponent } from '../src'
 import { Link } from '@react-pdf/renderer'
 
 it('should render links as anchors', async () => {
-  const wrapper = await shallow(
+  const wrapper = await renderComponent(
     <Link href='#myDest' style={{ fontFamily: 'Open Sans' }}>
       Link
     </Link>
@@ -16,7 +16,7 @@ it('should render links as anchors', async () => {
 })
 
 it('should render links as links', async () => {
-  const wrapper = await shallow(
+  const wrapper = await renderComponent(
     <Link
       style={{ fontFamily: 'Open Sans' }}
       src='https://es.wikipedia.org/wiki/Lorem_ipsum'
