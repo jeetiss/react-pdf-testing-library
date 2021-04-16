@@ -1,7 +1,6 @@
 /* eslint-env node, jest */
 
 import { configureToMatchImageSnapshot } from 'jest-image-snapshot'
-import { Font } from '@react-pdf/renderer'
 
 // setup image matcher
 const toMatchImageSnapshot = configureToMatchImageSnapshot({
@@ -10,12 +9,3 @@ const toMatchImageSnapshot = configureToMatchImageSnapshot({
 })
 
 expect.extend({ toMatchImageSnapshot })
-
-// register  fonts
-beforeAll(() => {
-  Font.register({
-    family: 'Open Sans',
-    src:
-      'https://fonts.gstatic.com/s/opensans/v17/mem8YaGs126MiZpBA-UFVZ0e.ttf'
-  })
-})

@@ -1,6 +1,13 @@
 import React from 'react'
+import { Link, Font } from '@react-pdf/renderer'
+
 import { renderComponent } from '../src'
-import { Link } from '@react-pdf/renderer'
+
+Font.register({
+  family: 'Open Sans',
+  src:
+    'https://fonts.gstatic.com/s/opensans/v17/mem8YaGs126MiZpBA-UFVZ0e.ttf'
+})
 
 it('should render links as anchors', async () => {
   const wrapper = await renderComponent(
