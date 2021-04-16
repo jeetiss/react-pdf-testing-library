@@ -3,7 +3,9 @@ import { Buffer } from 'buffer'
 import Canvas from 'canvas'
 import { renderToStream, Document, Page } from '@react-pdf/renderer'
 import * as pdfjs from 'pdfjs-dist/es5/build/pdf'
+
 import { crop } from './crop'
+import { renderDocument } from './document'
 
 const DocumentChecker = ({ children }) => {
   let topLevelElement = children
@@ -20,6 +22,82 @@ const DocumentChecker = ({ children }) => {
   }
 
   return topLevelElement
+}
+
+class PageCheckers {
+  constructor (page) {
+    this.pagePromise = page
+  }
+
+  async containsLinkTo (href) {
+    const page = await this.pagePromise
+    const annotations = await page.getAnnotations()
+
+    return annotations.some(
+      (annotation) => annotation.subtype === 'Link' && annotation.url === href
+    )
+  }
+
+  async containsAnchorTo (dest) {
+    const page = await this.pagePromise
+    const annotations = await page.getAnnotations()
+
+    if (dest.startsWith('#')) {
+      dest = dest.substring(1)
+    }
+
+    return annotations.some(
+      (annotation) => annotation.subtype === 'Link' && annotation.dest === dest
+    )
+  }
+
+  async imageSnapshot (options = {}) {
+    const page = await this.pagePromise
+    const viewport = page.getViewport({ scale: 1.0 })
+    const canvasFactory = new NodeCanvasFactory()
+    const { canvas, context } = canvasFactory.create(
+      viewport.width,
+      viewport.height
+    )
+    const renderContext = {
+      canvasContext: context,
+      viewport,
+      canvasFactory
+    }
+
+    const renderTask = page.render(renderContext)
+    await renderTask.promise
+
+    if (options.crop) {
+      const docCoods = {
+        top: 0,
+        left: 0,
+        bottom: canvas.height,
+        right: canvas.width
+      }
+      const imageData = context.getImageData(0, 0, canvas.width, canvas.height)
+      const contentCoords = await crop(imageData)
+      const cropDimensions = cropOptionsToDimentions(options.crop)
+
+      cropDimensions.forEach((dimension) => {
+        docCoods[dimension] = contentCoords[dimension]
+      })
+
+      const sx = docCoods.top
+      const sy = docCoods.left
+      const sWidth = docCoods.right - docCoods.left + 1
+      const sHeight = docCoods.bottom - docCoods.top + 1
+
+      const croppedCanvas = Canvas.createCanvas(sWidth, sHeight)
+      const ctx = croppedCanvas.getContext('2d')
+
+      ctx.drawImage(canvas, sx, sy, sWidth, sHeight, 0, 0, sWidth, sHeight)
+
+      return croppedCanvas.toBuffer()
+    }
+
+    return canvas.toBuffer()
+  }
 }
 
 const shallow = async (element) => {
@@ -53,9 +131,11 @@ const shallow = async (element) => {
     },
 
     page (index) {
-      currentPage = index
+      return new PageCheckers(pages[index ?? 0])
+    },
 
-      return this
+    async metadata () {
+      return (await document.getMetadata()).info
     },
 
     async imageSnapshot (options = {}) {
@@ -193,4 +273,4 @@ class NodeCanvasFactory {
   }
 }
 
-export { shallow }
+export { shallow, renderDocument }
