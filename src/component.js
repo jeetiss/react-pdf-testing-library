@@ -3,8 +3,9 @@ import { Document, Page } from '@react-pdf/renderer'
 import Canvas from 'canvas'
 import * as pdfjs from 'pdfjs-dist/es5/build/pdf'
 
-import { renderToBuffer, range } from './utils'
+import { renderToBuffer, getSnapshot, range } from './utils'
 import * as checkers from './checkers'
+import { crop } from './crop'
 
 const checkPagesWith = (pages, checker) => async (original) => {
   const results = await Promise.all(
@@ -36,10 +37,10 @@ const composeCanvases = (canvases) => {
   return resultCanvas
 }
 
-const renderComponent = async (element) => {
+const renderComponent = async (element, { size = 'A4' } = {}) => {
   const source = await renderToBuffer(
     <Document>
-      <Page size='A4'>{element}</Page>
+      <Page size={size}>{element}</Page>
     </Document>
   )
 
@@ -53,13 +54,18 @@ const renderComponent = async (element) => {
   )
 
   return {
-    imageSnapshot (options) {
+    async imageSnapshot (options) {
       if (pages.length === 1) {
         return checkers.imageSnapshot(pages[0], options)
       } else {
-        const pageSnapshots = composeCanvases(
-          pages.map((page) => checkers.imageSnapshot(page))
+        const canvases = await Promise.all(
+          pages.map((page) => getSnapshot(page))
         )
+        const pageSnapshots = composeCanvases(canvases)
+
+        if (options.crop) {
+          return crop(pageSnapshots, options.crop)
+        }
 
         return pageSnapshots.toBuffer()
       }

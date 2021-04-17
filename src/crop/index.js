@@ -44,12 +44,7 @@ export const crop = async (canvas, options = {}) => {
     bottom: canvas.height,
     right: canvas.width
   }
-  const imageData = context.getImageData(
-    0,
-    0,
-    canvas.width,
-    canvas.height
-  )
+  const imageData = context.getImageData(0, 0, canvas.width, canvas.height)
   const contentCoords = await cropAsm(imageData)
   const cropDimensions = optionsToDimentions(options)
 
