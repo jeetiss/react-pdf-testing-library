@@ -1,4 +1,12 @@
 {
   "extends": ["standard", "standard-jsx"],
-  "ignorePatterns": "assembly"
+  "ignorePatterns": "assembly",
+  "overrides": [
+    {
+      "files": ["**/*.test.js"],
+      "env": {
+        "jest": true // now **/*.test.js files' env has both es6 *and* jest
+      }
+    }
+  ]
 }
