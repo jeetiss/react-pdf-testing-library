@@ -1,21 +1,24 @@
 import { isValidElement } from 'react'
 import * as pdfjs from 'pdfjs-dist/es5/build/pdf'
 
-import { PageChecker } from './checkers'
+import * as checkers from './checkers'
 import { renderToBuffer, range } from './utils'
 
 const renderDocument = async (doc) => {
-  const source = isValidElement(doc)
-    ? await renderToBuffer(doc)
-    : doc
+  const source = isValidElement(doc) ? await renderToBuffer(doc) : doc
 
   const document = await pdfjs.getDocument({
     data: source.buffer,
     verbosity: 0
   }).promise
 
-  const pages = range(document.numPages).map((pageIndex) =>
-    new PageChecker(document.getPage(pageIndex + 1))
+  const pageCheckers = range(document.numPages).map((pageIndex) =>
+    Object.fromEntries(
+      Object.entries(checkers).map(([name, fn]) => [
+        name,
+        fn.bind(null, document.getPage(pageIndex + 1))
+      ])
+    )
   )
 
   return {
@@ -24,7 +27,7 @@ const renderDocument = async (doc) => {
     },
 
     page (index) {
-      return pages[index ?? 0]
+      return pageCheckers[index ?? 0]
     },
 
     async metadata () {

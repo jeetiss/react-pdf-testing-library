@@ -24,94 +24,49 @@ class NodeCanvasFactory {
   }
 }
 
-const cropOptionsToDimentions = (options) => {
-  if (!Array.isArray(options)) {
-    return typeof options === 'boolean'
-      ? ['bottom', 'left', 'right', 'top']
-      : [options]
-  }
+export const containsLinkTo = async (pagePromise, href) => {
+  const page = await pagePromise
+  const annotations = await page.getAnnotations()
 
-  return options
+  return annotations.some(
+    (annotation) => annotation.subtype === 'Link' && annotation.url === href
+  )
 }
 
-export class PageChecker {
-  constructor (page) {
-    this.pagePromise = page
+export const containsAnchorTo = async (pagePromise, dest) => {
+  const page = await pagePromise
+  const annotations = await page.getAnnotations()
+
+  if (dest.startsWith('#')) {
+    dest = dest.substring(1)
   }
 
-  async containsLinkTo (href) {
-    const page = await this.pagePromise
-    const annotations = await page.getAnnotations()
+  return annotations.some(
+    (annotation) =>
+      annotation.subtype === 'Link' && annotation.dest === dest
+  )
+}
 
-    return annotations.some(
-      (annotation) => annotation.subtype === 'Link' && annotation.url === href
-    )
+export const imageSnapshot = async (pagePromise, options = {}) => {
+  const page = await pagePromise
+  const viewport = page.getViewport({ scale: 1.0 })
+  const canvasFactory = new NodeCanvasFactory()
+  const { canvas, context } = canvasFactory.create(
+    viewport.width,
+    viewport.height
+  )
+  const renderContext = {
+    canvasContext: context,
+    viewport,
+    canvasFactory
   }
 
-  async containsAnchorTo (dest) {
-    const page = await this.pagePromise
-    const annotations = await page.getAnnotations()
+  const renderTask = page.render(renderContext)
+  await renderTask.promise
 
-    if (dest.startsWith('#')) {
-      dest = dest.substring(1)
-    }
-
-    return annotations.some(
-      (annotation) =>
-        annotation.subtype === 'Link' && annotation.dest === dest
-    )
+  if (options.crop) {
+    return crop(canvas, options.crop)
   }
 
-  async imageSnapshot (options = {}) {
-    const page = await this.pagePromise
-    const viewport = page.getViewport({ scale: 1.0 })
-    const canvasFactory = new NodeCanvasFactory()
-    const { canvas, context } = canvasFactory.create(
-      viewport.width,
-      viewport.height
-    )
-    const renderContext = {
-      canvasContext: context,
-      viewport,
-      canvasFactory
-    }
-
-    const renderTask = page.render(renderContext)
-    await renderTask.promise
-
-    if (options.crop) {
-      const docCoods = {
-        top: 0,
-        left: 0,
-        bottom: canvas.height,
-        right: canvas.width
-      }
-      const imageData = context.getImageData(
-        0,
-        0,
-        canvas.width,
-        canvas.height
-      )
-      const contentCoords = await crop(imageData)
-      const cropDimensions = cropOptionsToDimentions(options.crop)
-
-      cropDimensions.forEach((dimension) => {
-        docCoods[dimension] = contentCoords[dimension]
-      })
-
-      const sx = docCoods.top
-      const sy = docCoods.left
-      const sWidth = docCoods.right - docCoods.left + 1
-      const sHeight = docCoods.bottom - docCoods.top + 1
-
-      const croppedCanvas = Canvas.createCanvas(sWidth, sHeight)
-      const ctx = croppedCanvas.getContext('2d')
-
-      ctx.drawImage(canvas, sx, sy, sWidth, sHeight, 0, 0, sWidth, sHeight)
-
-      return croppedCanvas.toBuffer()
-    }
-
-    return canvas.toBuffer()
-  }
+  return canvas.toBuffer()
 }

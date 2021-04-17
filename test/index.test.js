@@ -15,14 +15,14 @@ it('should render pdf from components correctly', async () => {
 
 it('should work with raw pdf', async () => {
   const pdf = await readFile('./test/stub/sample.pdf')
-  const wrapper = await renderDocument(pdf)
+  const document = await renderDocument(pdf)
 
   expect(
-    await wrapper
+    await document
       .page(0)
       .containsLinkTo('http://projekty.wojtekmaj.pl/react-pdf')
   ).toBe(true)
 
-  expect(await wrapper.page(1).imageSnapshot()).toMatchImageSnapshot()
-  expect(await wrapper.page(2).imageSnapshot()).toMatchImageSnapshot()
+  expect(await document.page(1).imageSnapshot()).toMatchImageSnapshot()
+  expect(await document.page(2).imageSnapshot()).toMatchImageSnapshot()
 })
