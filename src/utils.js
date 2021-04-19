@@ -3,7 +3,7 @@ import { renderToStream } from '@react-pdf/renderer'
 import Canvas from 'canvas'
 
 /**
- * copypasted code from
+ * copy-pasted code from
  * https://github.com/mozilla/pdf.js/blob/master/examples/node/pdf2png/pdf2png.js#L20-L49
  */
 class NodeCanvasFactory {
@@ -68,12 +68,12 @@ export const range = (length) => Array.from({ length }, (_, index) => index)
 export const renderToBuffer = async function (element) {
   const stream = await renderToStream(element)
   return new Promise((resolve) => {
-    const bufs = []
+    const buffers = []
     stream.on('data', function (d) {
-      bufs.push(d)
+      buffers.push(d)
     })
     stream.on('end', function () {
-      resolve(Buffer.concat(bufs))
+      resolve(Buffer.concat(buffers))
     })
   })
 }

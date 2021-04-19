@@ -43,7 +43,7 @@ const cropAsm = async (imageData, padding) => {
  * @param {true | CropSides | CropSides[]} sides - dimensions to crop
  * @returns {CropSides[]}
  */
-const optionsToDimentions = (sides) => {
+const optionsToDimensions = (sides) => {
   if (!Array.isArray(sides)) {
     return typeof sides === 'boolean'
       ? ['bottom', 'left', 'right', 'top']
@@ -69,7 +69,7 @@ const optionsToDimentions = (sides) => {
  */
 export const crop = async (canvas, { sides = [], padding = 20 } = {}) => {
   const context = canvas.getContext('2d')
-  const docCoods = {
+  const docCoords = {
     top: 0,
     left: 0,
     bottom: canvas.height - 1,
@@ -77,16 +77,16 @@ export const crop = async (canvas, { sides = [], padding = 20 } = {}) => {
   }
   const imageData = context.getImageData(0, 0, canvas.width, canvas.height)
   const contentCoords = await cropAsm(imageData, padding)
-  const cropDimensions = optionsToDimentions(sides)
+  const cropDimensions = optionsToDimensions(sides)
 
   cropDimensions.forEach((dimension) => {
-    docCoods[dimension] = contentCoords[dimension]
+    docCoords[dimension] = contentCoords[dimension]
   })
 
-  const sx = docCoods.left
-  const sy = docCoods.top
-  const sWidth = docCoods.right - docCoods.left + 1
-  const sHeight = docCoods.bottom - docCoods.top + 1
+  const sx = docCoords.left
+  const sy = docCoords.top
+  const sWidth = docCoords.right - docCoords.left + 1
+  const sHeight = docCoords.bottom - docCoords.top + 1
 
   const croppedCanvas = Canvas.createCanvas(sWidth, sHeight)
   const ctx = croppedCanvas.getContext('2d')

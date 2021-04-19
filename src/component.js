@@ -23,7 +23,7 @@ const checkPagesWith = (pages, checker) => async (original) => {
 
 /**
  * Create new canvas that contains all canvases
- * @param {canvas[]} canvases — the array of canvases for concatination
+ * @param {canvas[]} canvases — the array of canvases for concatenation
  * @returns {canvas} a canvas
  */
 const composeCanvases = (canvases) => {

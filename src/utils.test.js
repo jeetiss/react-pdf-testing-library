@@ -6,7 +6,7 @@ describe('range', () => {
     expect(range(5).length).toBe(5)
   })
 
-  it('should return array with elements from 0 to lenght-1', () => {
+  it('should return array with elements from 0 to length - 1', () => {
     expect(range(5)).toEqual(expect.arrayContaining([0, 1, 2, 3, 4]))
   })
 
