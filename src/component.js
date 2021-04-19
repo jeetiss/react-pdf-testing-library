@@ -7,6 +7,12 @@ import { renderToBuffer, getSnapshot, range } from './utils'
 import * as checkers from './checkers'
 import { crop } from './crop'
 
+/**
+ * Runs all pages with one checker
+ * @param {Promise<PDFPageProxy>[]} pages - the array of pages to check
+ * @param {*} checker — the check function that returns boolean
+ * @returns {boolean} — Combined result
+ */
 const checkPagesWith = (pages, checker) => async (original) => {
   const results = await Promise.all(
     pages.map((page) => checker(page, original))
@@ -15,6 +21,11 @@ const checkPagesWith = (pages, checker) => async (original) => {
   return results.some(Boolean)
 }
 
+/**
+ * Create new canvas that contains all canvases
+ * @param {canvas[]} canvases — the array of canvases for concatination
+ * @returns {canvas} a canvas
+ */
 const composeCanvases = (canvases) => {
   const [maxWidth, maxHeight] = canvases.reduce(
     ([width, height], canvas) => [
@@ -37,6 +48,12 @@ const composeCanvases = (canvases) => {
   return resultCanvas
 }
 
+/**
+ * Renders react element and return test helpers
+ * @param {import('react').ReactElement} element — the element to test
+ * @param {{size: string|[number, number]}} options — size of page
+ * @returns {Checkers} a object with methods that helps in testing
+ */
 const renderComponent = async (element, { size = 'A4' } = {}) => {
   const source = await renderToBuffer(
     <Document>
