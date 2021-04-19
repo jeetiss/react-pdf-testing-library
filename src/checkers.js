@@ -24,10 +24,10 @@ export const containsAnchorTo = async (pagePromise, dest) => {
 }
 
 export const imageSnapshot = async (pagePromise, options = {}) => {
-  const canvas = await getSnapshot(pagePromise)
+  let canvas = await getSnapshot(pagePromise)
 
   if (options.crop) {
-    return crop(canvas, options.crop)
+    canvas = await crop(canvas, { sides: options.crop })
   }
 
   return canvas.toBuffer()

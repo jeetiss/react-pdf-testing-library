@@ -61,10 +61,10 @@ const renderComponent = async (element, { size = 'A4' } = {}) => {
         const canvases = await Promise.all(
           pages.map((page) => getSnapshot(page))
         )
-        const pageSnapshots = composeCanvases(canvases)
+        let pageSnapshots = composeCanvases(canvases)
 
         if (options.crop) {
-          return crop(pageSnapshots, options.crop)
+          pageSnapshots = await crop(pageSnapshots, { sides: options.crop })
         }
 
         return pageSnapshots.toBuffer()

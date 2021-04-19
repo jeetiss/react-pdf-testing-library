@@ -6,7 +6,7 @@ const asm = instantiateStreaming(readFile('./src/crop/assembly/code.wasm'))
 
 const clamp = (min, value, max) => Math.min(max, Math.max(value, min))
 
-const cropAsm = async (imageData, padding = 20) => {
+const cropAsm = async (imageData, padding) => {
   const { exports } = await asm
   const { __newArray, __getArray } = exports
 
@@ -36,24 +36,24 @@ const optionsToDimentions = (options) => {
   return options
 }
 
-export const crop = async (canvas, options = {}) => {
+export const crop = async (canvas, { sides = [], padding = 20 } = {}) => {
   const context = canvas.getContext('2d')
   const docCoods = {
     top: 0,
     left: 0,
-    bottom: canvas.height,
-    right: canvas.width
+    bottom: canvas.height - 1,
+    right: canvas.width - 1
   }
   const imageData = context.getImageData(0, 0, canvas.width, canvas.height)
-  const contentCoords = await cropAsm(imageData)
-  const cropDimensions = optionsToDimentions(options)
+  const contentCoords = await cropAsm(imageData, padding)
+  const cropDimensions = optionsToDimentions(sides)
 
   cropDimensions.forEach((dimension) => {
     docCoods[dimension] = contentCoords[dimension]
   })
 
-  const sx = docCoods.top
-  const sy = docCoods.left
+  const sx = docCoods.left
+  const sy = docCoods.top
   const sWidth = docCoods.right - docCoods.left + 1
   const sHeight = docCoods.bottom - docCoods.top + 1
 
@@ -62,5 +62,5 @@ export const crop = async (canvas, options = {}) => {
 
   ctx.drawImage(canvas, sx, sy, sWidth, sHeight, 0, 0, sWidth, sHeight)
 
-  return croppedCanvas.toBuffer()
+  return croppedCanvas
 }

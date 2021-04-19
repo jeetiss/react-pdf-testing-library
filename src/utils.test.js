@@ -1,5 +1,5 @@
 import { Canvas } from 'canvas'
-import { range, getSnapshot } from './utils'
+import { range, getSnapshot as getCanvas } from './utils'
 
 describe('range', () => {
   it('should return array', () => {
@@ -26,6 +26,10 @@ describe('getSnapshot', () => {
 
     render (options) {
       const ctx = options.canvasContext
+      const canvas = ctx.canvas
+
+      ctx.fillStyle = 'white'
+      ctx.fillRect(0, 0, canvas.width, canvas.height)
 
       ctx.fillStyle = 'black'
       ctx.fillRect(20, 20, 10, 10)
@@ -35,10 +39,11 @@ describe('getSnapshot', () => {
   })
 
   it('should return snapshot', async () => {
-    const snapshot = await getSnapshot(fakePage)
+    const canvas = await getCanvas(fakePage)
 
-    expect(snapshot).toBeInstanceOf(Canvas)
-    expect(snapshot.width).toBe(50)
-    expect(snapshot.height).toBe(50)
+    expect(canvas.width).toBe(50)
+    expect(canvas.height).toBe(50)
+    expect(canvas).toBeInstanceOf(Canvas)
+    expect(canvas.toBuffer()).toMatchImageSnapshot()
   })
 })
