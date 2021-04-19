@@ -33,6 +33,7 @@
     "transform": {
       "\\.js$": "jest-esm-jsx-transform"
     },
+    "testTimeout": 30000,
     "testEnvironment": "node",
     "transformIgnorePatterns": [
       "/node_modules/(?!@assemblyscript/)"
