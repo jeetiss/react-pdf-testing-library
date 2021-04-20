@@ -17,6 +17,74 @@ it('should work', async () => {
 })
 ```
 
+# API
+
+## renderComponent
+
+takes react-pdf component and size of page and returns helpers
+
+```js
+const wrapper = await renderComponent(<Component />, { size: 'A5' })
+```
+
+### imageSnapshot
+
+returns raw png image of the component. 
+
+```js
+const wrapper = await renderComponent(<Component />)
+
+expect(await wrapper.imageSnapshot()).toMatchImageSnapshot()
+```
+
+### containsLinkTo
+
+checks that link with href exists in the component
+
+```js
+const wrapper = await renderComponent(<Component />)
+
+expect(await wrapper.containsLinkTo('https://example.com')).toBe(true)
+```
+
+### containsAnchorTo
+
+checks that component contains goto construction
+
+```js
+const wrapper = await renderComponent(<Component />)
+
+expect(await wrapper.containsAnchorTo('#myDest')).toBe(true)
+```
+
+## renderDocument
+
+takes react-pdf component or raw pdf and returns document helpers
+
+### pagesNumber
+
+returns amount of pages in pdf
+
+```js
+const document = await renderDocument(<Component />)
+
+expect(document.pagesNumber).toBe(10)
+```
+
+### page
+
+returns object with `imageSnapshot`, `containsLinkTo` and `containsAnchorTo` helpers for page with specified index, index starts from 0
+
+> helpers runs over selected page
+
+```js
+const document = await renderDocument(<Component />)
+
+expect(await document.page(0).imageSnapshot()).toMatchImageSnapshot()
+expect(await document.page(1).containsAnchorTo('#myDest')).toBe(true)
+expect(await document.page(2).containsLinkTo('https://example.com')).toBe(true)
+```
+
 ## Build
 
 Clone this repo, `cd` into it, make sure you’re using Node 12+, and then:
