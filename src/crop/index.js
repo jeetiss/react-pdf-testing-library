@@ -2,10 +2,17 @@ import { instantiateStreaming } from '@assemblyscript/loader'
 import { readFile } from 'fs/promises'
 import Canvas from 'canvas'
 
+// asm module
 const asm = instantiateStreaming(readFile('./src/crop/assembly/code.wasm'))
 
 const clamp = (min, value, max) => Math.min(max, Math.max(value, min))
 
+/**
+ * Js wrapper for assemblyscript crop module
+ * @param {ImageData} imageData — the image date of canvas to crop
+ * @param {number} padding — the value in px on that content area will be increased
+ * @returns {{top: number, left: number, right: number, bottom: number}} content dimension
+ */
 const cropAsm = async (imageData, padding) => {
   const { exports } = await asm
   const { __newArray, __getArray } = exports
@@ -26,19 +33,43 @@ const cropAsm = async (imageData, padding) => {
   }
 }
 
-const optionsToDimentions = (options) => {
-  if (!Array.isArray(options)) {
-    return typeof options === 'boolean'
+/**
+ * Sides to crop
+ * @typedef {'bottom' | 'left' | 'right' | 'top'} CropSides
+ */
+
+/**
+ * Converts accepted parameters to array with CropSides
+ * @param {true | CropSides | CropSides[]} sides - dimensions to crop
+ * @returns {CropSides[]}
+ */
+const optionsToDimensions = (sides) => {
+  if (!Array.isArray(sides)) {
+    return typeof sides === 'boolean'
       ? ['bottom', 'left', 'right', 'top']
-      : [options]
+      : [sides]
   }
 
-  return options
+  return sides
 }
 
+/**
+ * Crop options
+ * @typedef {Object} CropOptions
+ * @property {true | CropSides | CropSides[]} [sides] — sides on canvas that will be cropped
+ *   if value is true, content will be cropped on all directions.
+ * @property {number} [padding] — extends the content area on this value in all dimensions
+ */
+
+/**
+ * Crops white color zones on canvas.
+ * @param {canvas} canvas — the canvas with content to crop. *should be on white background*
+ * @param {CropOptions} option — the crop options
+ * @returns {canvas} a new cropped canvas.
+ */
 export const crop = async (canvas, { sides = [], padding = 20 } = {}) => {
   const context = canvas.getContext('2d')
-  const docCoods = {
+  const docCoords = {
     top: 0,
     left: 0,
     bottom: canvas.height - 1,
@@ -46,16 +77,16 @@ export const crop = async (canvas, { sides = [], padding = 20 } = {}) => {
   }
   const imageData = context.getImageData(0, 0, canvas.width, canvas.height)
   const contentCoords = await cropAsm(imageData, padding)
-  const cropDimensions = optionsToDimentions(sides)
+  const cropDimensions = optionsToDimensions(sides)
 
   cropDimensions.forEach((dimension) => {
-    docCoods[dimension] = contentCoords[dimension]
+    docCoords[dimension] = contentCoords[dimension]
   })
 
-  const sx = docCoods.left
-  const sy = docCoods.top
-  const sWidth = docCoods.right - docCoods.left + 1
-  const sHeight = docCoods.bottom - docCoods.top + 1
+  const sx = docCoords.left
+  const sy = docCoords.top
+  const sWidth = docCoords.right - docCoords.left + 1
+  const sHeight = docCoords.bottom - docCoords.top + 1
 
   const croppedCanvas = Canvas.createCanvas(sWidth, sHeight)
   const ctx = croppedCanvas.getContext('2d')

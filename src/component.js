@@ -6,7 +6,12 @@ import * as pdfjs from 'pdfjs-dist/es5/build/pdf'
 import { renderToBuffer, getSnapshot, range } from './utils'
 import * as checkers from './checkers'
 import { crop } from './crop'
-
+/**
+ * Create function that runs all pages with one checker
+ * @param {Promise<PDFPageProxy>[]} pages - the array of pages to check
+ * @param {fn} checker — the check function that returns boolean
+ * @returns {fn} — new checker function that runs over all pages
+ */
 const checkPagesWith = (pages, checker) => async (original) => {
   const results = await Promise.all(
     pages.map((page) => checker(page, original))
@@ -15,6 +20,11 @@ const checkPagesWith = (pages, checker) => async (original) => {
   return results.some(Boolean)
 }
 
+/**
+ * Create new canvas that contains all canvases
+ * @param {canvas[]} canvases — the array of canvases for concatenation
+ * @returns {canvas} a canvas
+ */
 const composeCanvases = (canvases) => {
   const [maxWidth, maxHeight] = canvases.reduce(
     ([width, height], canvas) => [
@@ -37,6 +47,12 @@ const composeCanvases = (canvases) => {
   return resultCanvas
 }
 
+/**
+ * Renders react element and return test helpers
+ * @param {import('react').ReactElement} element — the element to test
+ * @param {{size: string|[number, number]}} options — size of page
+ * @returns {Checkers} a object with methods that helps in testing
+ */
 const renderComponent = async (element, { size = 'A4' } = {}) => {
   const source = await renderToBuffer(
     <Document>
@@ -54,6 +70,7 @@ const renderComponent = async (element, { size = 'A4' } = {}) => {
   )
 
   return {
+    // Returns image snapshot of the component
     async imageSnapshot (options) {
       if (pages.length === 1) {
         return checkers.imageSnapshot(pages[0], options)
@@ -71,8 +88,10 @@ const renderComponent = async (element, { size = 'A4' } = {}) => {
       }
     },
 
+    // Checks that link with href exists in the component
     containsLinkTo: checkPagesWith(pages, checkers.containsLinkTo),
 
+    // Checks that component contains goto construction
     containsAnchorTo: checkPagesWith(pages, checkers.containsAnchorTo)
   }
 }
