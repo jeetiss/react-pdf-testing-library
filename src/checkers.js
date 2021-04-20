@@ -15,6 +15,7 @@ export const containsLinkTo = async (pagePromise, href) => {
     (annotation) => annotation.subtype === 'Link' && annotation.url === href
   )
 }
+
 /**
  * Checks that page contains goto construction
  * @param {Promise<PDFPageProxy>} pagePromise — the promise that will be resolved with PDFPageProxy instance
