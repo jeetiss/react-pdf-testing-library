@@ -1,5 +1,5 @@
 import { Canvas } from 'canvas'
-import { range, getSnapshot as getCanvas } from './utils'
+import { range, getCanvas } from './utils'
 
 describe('range', () => {
   it('should return array', () => {

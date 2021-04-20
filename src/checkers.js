@@ -1,5 +1,5 @@
 import { crop } from './crop'
-import { getSnapshot } from './utils'
+import { getCanvas } from './utils'
 
 /**
  * Checks that link with href exists on the page
@@ -41,7 +41,7 @@ export const containsAnchorTo = async (pagePromise, dest) => {
  * @returns {Buffer} - a raw png image
  */
 export const imageSnapshot = async (pagePromise, options = {}) => {
-  let canvas = await getSnapshot(pagePromise)
+  let canvas = await getCanvas(pagePromise)
 
   if (options.crop) {
     canvas = await crop(canvas, { sides: options.crop })
