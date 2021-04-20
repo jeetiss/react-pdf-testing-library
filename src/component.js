@@ -6,12 +6,11 @@ import * as pdfjs from 'pdfjs-dist/es5/build/pdf'
 import { renderToBuffer, getSnapshot, range } from './utils'
 import * as checkers from './checkers'
 import { crop } from './crop'
-
 /**
- * Runs all pages with one checker
+ * Create function that runs all pages with one checker
  * @param {Promise<PDFPageProxy>[]} pages - the array of pages to check
- * @param {*} checker — the check function that returns boolean
- * @returns {boolean} — Combined result
+ * @param {fn} checker — the check function that returns boolean
+ * @returns {fn} — new checker function that runs over all pages
  */
 const checkPagesWith = (pages, checker) => async (original) => {
   const results = await Promise.all(
@@ -71,6 +70,7 @@ const renderComponent = async (element, { size = 'A4' } = {}) => {
   )
 
   return {
+    // Returns image snapshot of the component
     async imageSnapshot (options) {
       if (pages.length === 1) {
         return checkers.imageSnapshot(pages[0], options)
@@ -88,8 +88,10 @@ const renderComponent = async (element, { size = 'A4' } = {}) => {
       }
     },
 
+    // Checks that link with href exists in the component
     containsLinkTo: checkPagesWith(pages, checkers.containsLinkTo),
 
+    // Checks that component contains goto construction
     containsAnchorTo: checkPagesWith(pages, checkers.containsAnchorTo)
   }
 }

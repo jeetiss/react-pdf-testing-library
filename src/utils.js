@@ -30,7 +30,7 @@ class NodeCanvasFactory {
 }
 /**
  * Renders PDFPageProxy to canvas
- * @param {Promise<PDFPageProxy>} pagePromise — promise that is resolved with PDFPageProxy instance
+ * @param {Promise<PDFPageProxy>} pagePromise — the promise that will be resolved with PDFPageProxy instance
  * @returns {canvas} a PDFPageProxy content on canvas
  */
 export const getSnapshot = async (pagePromise) => {
