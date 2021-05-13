@@ -1,7 +1,7 @@
 import React from 'react'
 import { Link, Font } from '@react-pdf/renderer'
 
-import { renderComponent } from '../src'
+import { renderComponent } from '..'
 
 Font.register({
   family: 'Open Sans',

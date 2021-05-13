@@ -1,12 +1,12 @@
-# test-pdfs-demo
+# react-pdf-testing-library
 
-Demo of pdf visual testing with `jest-image-snapshot`.
+Set of helpers for `react-pdf` visual testing with `jest-image-snapshot`.
 
 ## Usage
 
 ```js
 import { Resume } from '..'
-import { renderDocument } from '..'
+import { renderDocument } from 'react-pdf-testing-library'
 
 it('should work', async () => {
   const document = await renderDocument(<Resume />)

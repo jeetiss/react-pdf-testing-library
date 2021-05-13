@@ -6,6 +6,7 @@ import * as pdfjs from 'pdfjs-dist/es5/build/pdf'
 import { renderToBuffer, getCanvas, range } from './utils'
 import * as checkers from './checkers'
 import { crop } from './crop'
+
 /**
  * Create function that runs all pages with one checker
  * @param {Promise<PDFPageProxy>[]} pages - the array of pages to check
