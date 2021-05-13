@@ -1,6 +1,6 @@
 {
   "extends": ["standard", "standard-jsx"],
-  "ignorePatterns": "assembly",
+  "ignorePatterns": ["assembly", "dist"],
   "overrides": [
     {
       "files": ["**/*.test.js"],
