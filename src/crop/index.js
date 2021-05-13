@@ -1,9 +1,11 @@
 import { instantiateStreaming } from '@assemblyscript/loader'
 import { readFile } from 'fs/promises'
 import Canvas from 'canvas'
+import { resolve } from 'path'
 
 // asm module
-const asm = instantiateStreaming(readFile('./src/crop/assembly/code.wasm'))
+const pathToAsm = resolve(__dirname, './assembly/code.wasm')
+const asm = instantiateStreaming(readFile(pathToAsm))
 
 const clamp = (min, value, max) => Math.min(max, Math.max(value, min))
 

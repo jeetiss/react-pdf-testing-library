@@ -1,21 +1,37 @@
 {
-  "private": true,
-  "main": "./src/index.js",
+  "name": "react-pdf-testing-library",
+  "version": "0.0.1",
+  "description": "Tools for react-pdf visual testing",
+  "main": "./dist/index.js",
+  "files": [
+    "dist/*"
+  ],
+  "repository": "jeetiss/react-pdf-testing-library",
+  "author": "Dmitry Ivakhnenko <jeetiss@ya.ru>",
+  "license": "ISC",
   "scripts": {
-    "build": "asc ./src/crop/assembly/index.ts --target release --config ./src/crop/assembly/asconfig.json",
+    "build": "npm run build-asc && rollup -c",
+    "build-asc": "asc ./src/crop/assembly/index.ts --target release --config ./src/crop/assembly/asconfig.json",
     "track-obsolete": "JEST_IMAGE_SNAPSHOT_TRACK_OBSOLETE=1 jest",
     "test": "jest",
     "lint": "eslint ."
   },
+  "peerDependencies": {
+    "react": ">=16.8.0"
+  },
   "dependencies": {
-    "@assemblyscript/loader": "^0.18.22",
     "@react-pdf/renderer": "^1.6.15",
     "canvas": "^2.7.0",
     "pdfjs-dist": "2.6.347"
   },
   "devDependencies": {
+    "@assemblyscript/loader": "^0.18.22",
+    "@babel/core": "^7.14.2",
+    "@babel/preset-react": "^7.13.13",
+    "@rollup/plugin-babel": "^5.3.0",
+    "@rollup/plugin-node-resolve": "^13.0.0",
     "@uploadcare/upload-client": "^1.1.3",
-    "assemblyscript": "^0.18.22",
+    "assemblyscript": "^0.18.31",
     "eslint": "^7.23.0",
     "eslint-config-standard": "^16.0.2",
     "eslint-config-standard-jsx": "^10.0.0",
@@ -26,7 +42,9 @@
     "jest": "^26.6.3",
     "jest-esm-jsx-transform": "^1.0.0",
     "jest-image-snapshot": "^4.4.1",
-    "react": "^17.0.2"
+    "react": "^17.0.2",
+    "rollup": "^2.47.0",
+    "rollup-plugin-copy": "^3.4.0"
   },
   "jest": {
     "verbose": true,

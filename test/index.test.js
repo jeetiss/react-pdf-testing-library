@@ -1,6 +1,6 @@
 import React from 'react'
 import { readFile } from 'fs/promises'
-import { renderDocument } from '../src'
+import { renderDocument } from '..'
 
 import Resume from './stub/resume'
 
