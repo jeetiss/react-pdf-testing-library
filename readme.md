@@ -4,6 +4,10 @@ Set of helpers for `react-pdf` visual testing with `jest-image-snapshot`.
 
 ## Usage
 
+```bash
+npm i -D react-pdf-testing-library
+```
+
 ```js
 import { Resume } from '..'
 import { renderDocument } from 'react-pdf-testing-library'
