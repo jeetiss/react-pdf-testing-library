@@ -39,7 +39,7 @@ it('should render multipage component to one snapshot', async () => {
 
   const wrapper = await renderComponent(
     <TextSpliter
-      text='javascript>typescript'
+      text='javascript<typescript'
       font='Open Sans'
     />,
 

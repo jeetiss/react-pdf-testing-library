@@ -22,7 +22,7 @@ const styles = StyleSheet.create({
     justifySelf: 'flex-end'
   },
   name: {
-    fontSize: 24,
+    fontSize: 25,
     fontFamily: 'Lato Bold'
   },
   subtitle: {
