@@ -20,7 +20,7 @@
     "react": ">=16.8.0"
   },
   "dependencies": {
-    "@react-pdf/renderer": "^1.6.15",
+    "@react-pdf/renderer": "^2.3.0",
     "canvas": "^2.7.0",
     "pdfjs-dist": "2.6.347"
   },
